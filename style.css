@@ -1,0 +1,307 @@
+/* Variáveis de Cores - Tema Verde Oliva */
+:root {
+    --olive-dark: #4A5D23;
+    --olive-main: #6B8E23;
+    --olive-light: #8FBC8F;
+    --bg-color: #FAF9F6; /* Off-white / creme muito claro */
+    --text-dark: #2C3522;
+    --text-light: #F0F4E6;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Lato', sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-dark);
+    line-height: 1.6;
+}
+
+h1, h2, h3, .pre-title {
+    font-family: 'Playfair Display', serif;
+    font-weight: 600;
+}
+
+.container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 20px;
+    text-align: center;
+}
+
+/* Botões */
+.btn {
+    display: inline-block;
+    background-color: var(--olive-main);
+    color: white;
+    padding: 12px 30px;
+    text-decoration: none;
+    border-radius: 30px;
+    font-size: 1.1rem;
+    transition: background-color 0.3s ease;
+    border: none;
+    cursor: pointer;
+}
+
+.btn:hover {
+    background-color: var(--olive-dark);
+}
+
+.btn-outline {
+    background-color: transparent;
+    color: var(--olive-main);
+    border: 2px solid var(--olive-main);
+}
+
+.btn-outline:hover {
+    background-color: var(--olive-main);
+    color: white;
+}
+
+.btn-small {
+    padding: 8px 20px;
+    font-size: 1rem;
+    margin-top: 15px;
+}
+
+/* Hero Section */
+.hero {
+    background: linear-gradient(rgba(74, 93, 35, 0.8), rgba(74, 93, 35, 0.8)), url('https://images.unsplash.com/photo-1519225421980-715cb0215aed?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80') center/cover;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-light);
+    text-align: center;
+    padding: 20px;
+}
+
+.pre-title {
+    font-size: 1.2rem;
+    font-style: italic;
+    margin-bottom: 10px;
+}
+
+.hero h1 {
+    font-size: 4.5rem;
+    margin-bottom: 10px;
+    letter-spacing: 2px;
+}
+
+.subtitle {
+    font-size: 1.5rem;
+    margin-bottom: 30px;
+}
+
+.date-location {
+    margin-bottom: 40px;
+    font-size: 1.2rem;
+}
+
+/* RSVP Section */
+.rsvp-section {
+    padding: 80px 0;
+    background-color: white;
+}
+
+.rsvp-section h2 {
+    font-size: 2.5rem;
+    color: var(--olive-dark);
+    margin-bottom: 20px;
+}
+
+.rsvp-section p {
+    max-width: 600px;
+    margin: 0 auto 30px;
+    font-size: 1.1rem;
+}
+
+/* Gifts Section */
+.gifts-section {
+    padding: 80px 0;
+    background-color: var(--bg-color);
+}
+
+.gifts-section h2 {
+    font-size: 2.5rem;
+    color: var(--olive-dark);
+    margin-bottom: 20px;
+}
+
+.gifts-section > .container > p {
+    max-width: 700px;
+    margin: 0 auto 50px;
+    font-size: 1.1rem;
+}
+
+.gift-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 30px;
+}
+
+.gift-card {
+    background-color: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    transition: transform 0.3s ease;
+    border-top: 4px solid var(--olive-light);
+}
+
+.gift-card:hover {
+    transform: translateY(-5px);
+}
+
+.gift-icon {
+    font-size: 3rem;
+    margin-bottom: 15px;
+}
+
+.gift-card h3 {
+    font-size: 1.3rem;
+    margin-bottom: 10px;
+    color: var(--olive-dark);
+}
+
+.gift-card p {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #666;
+}
+
+.highlight-card {
+    border-top: 4px solid var(--olive-dark);
+    background-color: #F8FAF2;
+}
+
+.btn-pix {
+    background-color: var(--olive-dark);
+}
+
+/* Modal PIX */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.6);
+}
+
+.modal-content {
+    background-color: white;
+    margin: 15% auto;
+    padding: 30px;
+    border-radius: 10px;
+    width: 90%;
+    max-width: 500px;
+    text-align: center;
+    position: relative;
+    border-top: 6px solid var(--olive-main);
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close:hover {
+    color: var(--olive-dark);
+}
+
+.pix-box {
+    margin: 20px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.pix-box input {
+    padding: 12px;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    text-align: center;
+    background-color: #f9f9f9;
+}
+
+.pix-success {
+    color: var(--olive-main);
+    font-weight: bold;
+    display: none;
+    margin-bottom: 15px;
+}
+
+.pix-note {
+    font-size: 0.9rem;
+    color: #666;
+}
+
+/* Footer */
+footer {
+    background-color: var(--olive-dark);
+    color: white;
+    text-align: center;
+    padding: 30px 0;
+    font-family: 'Playfair Display', serif;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .hero h1 { font-size: 3rem; }
+    .subtitle { font-size: 1.2rem; }
+}
+
+/* --- ESTILOS DA VAQUINHA / PROGRESSO --- */
+.progress-container {
+    background-color: #e5e9dc;
+    border-radius: 10px;
+    margin: 15px 0 5px 0;
+    height: 12px;
+    width: 100%;
+    overflow: hidden;
+}
+
+.progress-bar {
+    background-color: var(--olive-main);
+    height: 100%;
+    width: 0%; /* Controlado pelo JS */
+    transition: width 0.6s ease;
+}
+
+.gift-status {
+    font-size: 0.9rem;
+    color: #666;
+    margin-bottom: 15px;
+    font-weight: 400;
+}
+
+/* Quando o item bate 100% da meta */
+.gift-card.concluido {
+    border-top: 4px solid var(--olive-dark);
+    background-color: #f7f9f3;
+}
+
+.gift-card.concluido .progress-bar {
+    background-color: var(--olive-dark);
+}
+
+.gift-card.concluido h3 {
+    color: #888;
+}
+
+/* Estilo do input de número do Modal */
+#contribValue::-webkit-inner-spin-button, 
+#contribValue::-webkit-outer-spin-button { 
+  opacity: 1;
+}
