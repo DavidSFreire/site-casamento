@@ -1,3 +1,32 @@
+// --- CONFIGURAÇÃO DO FIREBASE ---
+// Cole aqui as SUAS credenciais obtidas no Passo 2
+const firebaseConfig = {
+
+    apiKey: "AIzaSyAaoaMx4ZAyrLcYaN7O2Oe03rlm6L9HAEY",
+
+    authDomain: "casamento-isa-david.firebaseapp.com",
+
+    databaseURL: "https://casamento-isa-david-default-rtdb.firebaseio.com",
+
+    projectId: "casamento-isa-david",
+
+    storageBucket: "casamento-isa-david.firebasestorage.app",
+
+    messagingSenderId: "988788635273",
+
+    appId: "1:988788635273:web:e28b00d92198cc741f7858"
+
+  };
+
+
+// Importando os módulos necessários do Firebase via CDN (Sem precisar instalar nada)
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+import { getDatabase, ref, onValue, runTransaction } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+// --- ELEMENTOS DO DOM ---
 const modal = document.getElementById("pixModal");
 const modalTitle = document.getElementById("modalTitle");
 const pixSuccessMsg = document.getElementById("pixSuccessMsg");
@@ -10,6 +39,7 @@ const productLink = document.getElementById("productLink");
 
 let presenteAtualId = null;
 let maxDisponivel = 0;
+let valoresArrecadadosGlobais = {}; // Armazenará os dados em tempo real vindos do Firebase
 
 // --- ANIMAÇÃO DE ROLAGEM SUAVE ---
 document.querySelectorAll('.js-scroll').forEach(anchor => {
@@ -27,26 +57,25 @@ document.querySelectorAll('.js-scroll').forEach(anchor => {
     });
 });
 
-window.onload = function() {
+// --- SINCRONIZAÇÃO EM TEMPO REAL COM O FIREBASE ---
+// Sempre que alguém abrir a página ou um valor mudar no banco, o Firebase avisa o site e atualiza as barras na hora!
+const presentesRef = ref(db, 'presentes');
+onValue(presentesRef, (snapshot) => {
+    valoresArrecadadosGlobais = snapshot.val() || {};
     atualizarTodosOsPresentes();
-    
-    // Alerta informativo sobre a sincronização de dados globais
-    console.warn("Nota de Hospedagem: Como o site está no GitHub Pages, os valores confirmados via botão salvam apenas localmente (localStorage). Para sincronização global em tempo real entre todos os convidados, é recomendada a integração com uma API gratuita como Firebase, Supabase, ou um script conectado ao Google Sheets.");
-}
+});
 
 function atualizarTodosOsPresentes() {
     const cards = document.querySelectorAll('.gift-card');
-    const locais = JSON.parse(localStorage.getItem('minhasContribuicoes')) || {};
 
     cards.forEach(card => {
         const id = card.id.replace('card-', '');
         if (id === 'livre') return;
 
         const total = parseFloat(card.getAttribute('data-total'));
-        let arrecadadoBase = parseFloat(card.getAttribute('data-arrecadado'));
         
-        let arrecadadoLocal = locais[id] ? locais[id] : 0;
-        let arrecadadoTotal = arrecadadoBase + arrecadadoLocal;
+        // Em vez de ler do HTML ou localStorage, lê o que está guardado no Firebase globalmente
+        let arrecadadoTotal = valoresArrecadadosGlobais[id] ? parseFloat(valoresArrecadadosGlobais[id]) : 0;
 
         if (arrecadadoTotal > total) arrecadadoTotal = total;
 
@@ -74,13 +103,13 @@ function atualizarTodosOsPresentes() {
     });
 }
 
-function openCotaModal(nomePresente, idPresente) {
+// --- FUNÇÕES DO MODAL ---
+window.openCotaModal = function(nomePresente, idPresente) {
     modalTitle.innerText = nomePresente;
     presenteAtualId = idPresente;
     pixSuccessMsg.style.display = "none";
     maxLimitNotice.style.display = "none";
 
-    // --- LOGICA DO LINK DO PRODUTO NO MODAL ---
     if (idPresente !== 'livre') {
         const card = document.getElementById(`card-${idPresente}`);
         const urlProduto = card.getAttribute('data-link');
@@ -94,12 +123,11 @@ function openCotaModal(nomePresente, idPresente) {
 
         cotaInputArea.style.display = "block";
         const total = parseFloat(card.getAttribute('data-total'));
-        const arrecadadoBase = parseFloat(card.getAttribute('data-arrecadado'));
         
-        const locais = JSON.parse(localStorage.getItem('minhasContribuicoes')) || {};
-        const arrecadadoLocal = locais[idPresente] ? locais[idPresente] : 0;
+        // Pega o valor atualizado do Firebase para calcular o limite restante correto
+        const arrecadadoTotal = valoresArrecadadosGlobais[idPresente] ? parseFloat(valoresArrecadadosGlobais[idPresente]) : 0;
         
-        maxDisponivel = total - (arrecadadoBase + arrecadadoLocal);
+        maxDisponivel = total - arrecadadoTotal;
         contribValueInput.value = maxDisponivel;
         contribValueInput.max = maxDisponivel;
     } else {
@@ -112,7 +140,7 @@ function openCotaModal(nomePresente, idPresente) {
     modal.style.display = "block";
 }
 
-function closePixModal() {
+window.closePixModal = function() {
     modal.style.display = "none";
 }
 
@@ -122,7 +150,7 @@ window.onclick = function(event) {
     }
 }
 
-function copyPixKey() {
+window.copyPixKey = function() {
     const pixKeyInput = document.getElementById("pixKey");
     pixKeyInput.select();
     pixKeyInput.setSelectionRange(0, 99999);
@@ -132,6 +160,7 @@ function copyPixKey() {
     });
 }
 
+// --- SALVAR A CONTRIBUIÇÃO NO BANCO DE DADOS ---
 btnConfirmarPgto.onclick = function() {
     const valorDigitado = parseFloat(contribValueInput.value);
 
@@ -147,12 +176,21 @@ btnConfirmarPgto.onclick = function() {
     }
 
     if (presenteAtualId !== 'livre') {
-        let locais = JSON.parse(localStorage.getItem('minhasContribuicoes')) || {};
-        locais[presenteAtualId] = (locais[presenteAtualId] || 0) + valorDigitado;
-        localStorage.setItem('minhasContribuicoes', JSON.stringify(locais));
+        // Usa uma transação para evitar que duas pessoas enviando ao mesmo tempo quebrem a soma
+        const presenteEspecificoRef = ref(db, `presentes/${presenteAtualId}`);
+        runTransaction(presenteEspecificoRef, (valorAtual) => {
+            // Se o valor não existir no banco ainda, ele começa como 0 e soma o digitado
+            return (valorAtual || 0) + valorDigitado;
+        }).then(() => {
+            alert(`Muito obrigado! Seu presente de R$ ${valorDigitado.toFixed(2).replace('.',',')} foi registrado e atualizado para todos.`);
+            closePixModal();
+        }).catch((error) => {
+            console.error("Erro ao salvar:", error);
+            alert("Houve um erro ao registrar. Tente novamente.");
+        });
+    } else {
+        // Se for o pix livre, apenas avisa o usuário (já que não há meta cadastrada para somar em barra)
+        alert(`Muito obrigado! Seu presente em PIX Livre de R$ ${valorDigitado.toFixed(2).replace('.',',')} foi confirmado.`);
+        closePixModal();
     }
-
-    alert(`Muito obrigado! Seu presente de R$ ${valorDigitado.toFixed(2).replace('.',',')} foi registrado.`);
-    closePixModal();
-    atualizarTodosOsPresentes();
 }
