@@ -104,6 +104,7 @@ function atualizarTodosOsPresentes() {
 }
 
 // --- FUNÇÕES DO MODAL ---
+// --- FUNÇÕES DO MODAL (EXPOSTAS GLOBALMENTE) ---
 window.openCotaModal = function(nomePresente, idPresente) {
     modalTitle.innerText = nomePresente;
     presenteAtualId = idPresente;
