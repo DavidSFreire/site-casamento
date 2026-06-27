@@ -17,7 +17,7 @@
             <h1>David & Isadora</h1>
             <p class="subtitle">Convidam para celebrar o seu casamento</p>
             <div class="date-location">
-                <p><strong>Dia 17 de Setembro de 20226</strong></p>
+                <p><strong>Dia 17 de Setembro de 2026</strong></p>
                 <p>Leys Jardin</p>
             </div>
             
@@ -43,7 +43,7 @@
             <p>Escolha um presente abaixo e contribua com o valor que desejar. As cotas nos ajudam a montar nosso lar!</p>
             
             <div class="gift-grid">
-                <div class="gift-card" id="card-presente-1" data-total="300" data-arrecadado="100" data-link="https://www.exemplo.com/item1">
+                <div class="gift-card" id="card-presente-1" data-total="300" data-link="https://www.exemplo.com/item1">
                     <div class="gift-icon">🍽️</div>
                     <h3>Jantar Romântico</h3>
                     <p class="gift-total">Total: R$ 300,00</p>
@@ -51,10 +51,10 @@
                         <div class="progress-bar" id="bar-presente-1"></div>
                     </div>
                     <p class="gift-status" id="status-presente-1">Calculando...</p>
-                    <button id="btn-presente-1" class="btn btn-small" onclick="openCotaModal('Jantar Romântico', 'presente-1')">Contribuir com uma parte</button>
+                    <button id="btn-presente-1" class="btn btn-small js-open-modal" data-nome="Jantar Romântico" data-id="presente-1">Contribuir com uma parte</button>
                 </div>
 
-                <div class="gift-card" id="card-presente-2" data-total="1200" data-arrecadado="0" data-link="https://www.exemplo.com/item2">
+                <div class="gift-card" id="card-presente-2" data-total="1200" data-link="https://www.exemplo.com/item2">
                     <div class="gift-icon">✈️</div>
                     <h3>Passagens de Lua de Mel</h3>
                     <p class="gift-total">Total: R$ 1.200,00</p>
@@ -62,10 +62,10 @@
                         <div class="progress-bar" id="bar-presente-2"></div>
                     </div>
                     <p class="gift-status" id="status-presente-2">Calculando...</p>
-                    <button id="btn-presente-2" class="btn btn-small" onclick="openCotaModal('Passagens de Lua de Mel', 'presente-2')">Contribuir com uma parte</button>
+                    <button id="btn-presente-2" class="btn btn-small js-open-modal" data-nome="Passagens de Lua de Mel" data-id="presente-2">Contribuir com uma parte</button>
                 </div>
 
-                <div class="gift-card" id="card-presente-3" data-total="500" data-arrecadado="500" data-link="https://www.exemplo.com/item3">
+                <div class="gift-card" id="card-presente-3" data-total="500" data-link="https://www.exemplo.com/item3">
                     <div class="gift-icon">☕</div>
                     <h3>Cafeteira de Cápsulas</h3>
                     <p class="gift-total">Total: R$ 500,00</p>
@@ -73,15 +73,15 @@
                         <div class="progress-bar" id="bar-presente-3"></div>
                     </div>
                     <p class="gift-status" id="status-presente-3">Calculando...</p>
-                    <button id="btn-presente-3" class="btn btn-small" onclick="openCotaModal('Cafeteira de Cápsulas', 'presente-3')">Contribuir com uma parte</button>
+                    <button id="btn-presente-3" class="btn btn-small js-open-modal" data-nome="Cafeteira de Cápsulas" data-id="presente-3">Contribuir com uma parte</button>
                 </div>
 
-                <div class="gift-card highlight-card" id="card-livre" data-total="999999" data-arrecadado="0" data-link="">
+                <div class="gift-card highlight-card" id="card-livre" data-total="999999" data-link="">
                     <div class="gift-icon">💚</div>
                     <h3>Presente em PIX Livre</h3>
                     <p class="gift-total">Qualquer valor é bem-vindo</p>
                     <div style="height: 26px;"></div>
-                    <button class="btn btn-small btn-pix" onclick="openCotaModal('Presente em PIX Livre', 'livre')">Contribuir com PIX</button>
+                    <button class="btn btn-small btn-pix js-open-modal" data-nome="Presente em PIX Livre" data-id="livre">Contribuir com PIX</button>
                 </div>
             </div>
         </div>
@@ -89,7 +89,7 @@
 
     <div id="pixModal" class="modal">
         <div class="modal-content">
-            <span class="close" onclick="closePixModal()">&times;</span>
+            <span class="close">&times;</span>
             <h3 id="modalTitle">Nome do Presente</h3>
             
             <div id="productLinkArea" style="margin-top: 10px; display: none;">
@@ -107,7 +107,7 @@
             
             <div class="pix-box">
                 <input type="text" id="pixKey" value="emaildonoivo@gmail.com" readonly>
-                <button onclick="copyPixKey()" class="btn btn-small">Copiar Chave</button>
+                <button class="btn btn-small js-copy-pix">Copiar Chave</button>
             </div>
             <p class="pix-success" id="pixSuccessMsg">Chave PIX copiada com sucesso!</p>
             
