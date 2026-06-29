@@ -305,3 +305,29 @@ footer {
 #contribValue::-webkit-outer-spin-button { 
   opacity: 1;
 }
+
+/* --- ESTILOS DAS IMAGENS DOS PRESENTES --- */
+.gift-image-container {
+    width: 100%;
+    height: 180px;
+    margin-bottom: 15px;
+    overflow: hidden;
+    border-radius: 8px;
+    background-color: #f0f0f0;
+}
+
+.gift-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.gift-card:hover .gift-img {
+    transform: scale(1.05);
+}
+
+.gift-card.concluido .gift-img {
+    filter: grayscale(100%);
+    opacity: 0.6;
+}
