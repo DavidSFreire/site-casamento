@@ -27,6 +27,12 @@ const cotaInputArea = document.getElementById("cotaInputArea");
 const productLinkArea = document.getElementById("productLinkArea");
 const productLink = document.getElementById("productLink");
 
+// Elementos da Segunda Etapa do Modal
+const modalStep1 = document.getElementById("modalStep1");
+const modalStep2 = document.getElementById("modalStep2");
+const btnVoltarStep1 = document.getElementById("btnVoltarStep1");
+const btnConfirmarFinal = document.getElementById("btnConfirmarFinal");
+
 let presenteAtualId = null;
 let maxDisponivel = 0;
 let valoresArrecadadosGlobais = {}; // Armazena dados vindos do Firebase
@@ -92,6 +98,10 @@ function atualizarTodosOsPresentes() {
 
 // --- LOGICA E FUNÇÕES DO MODAL ---
 function openCotaModal(nomePresente, idPresente) {
+    // Força o modal a sempre abrir no Passo 1
+    modalStep1.style.display = "block";
+    modalStep2.style.display = "none";
+
     modalTitle.innerText = nomePresente;
     presenteAtualId = idPresente;
     pixSuccessMsg.style.display = "none";
@@ -166,34 +176,57 @@ window.onclick = function(event) {
     }
 }
 
-// --- CONFIRMAÇÃO DE TRANSFERÊNCIA (SALVAR NO FIREBASE) ---
-btnConfirmarPgto.onclick = function() {
-    const valorDigitado = parseFloat(contribValueInput.value);
+// --- FLUXO DE CONFIRMAÇÃO (DUAS ETAPAS) ---
 
-    if (isNaN(valorDigitado) || valorDigitado <= 0) {
-        alert("Por favor, insira um valor válido para contribuir.");
-        return;
+// Etapa 1: Valida o valor e avança para a tela de confirmação
+if(btnConfirmarPgto) {
+    btnConfirmarPgto.onclick = function() {
+        const valorDigitado = parseFloat(contribValueInput.value);
+
+        if (isNaN(valorDigitado) || valorDigitado <= 0) {
+            alert("Por favor, insira um valor válido para contribuir.");
+            return;
+        }
+
+        if (valorDigitado > maxDisponivel && presenteAtualId !== 'livre') {
+            maxLimitNotice.innerText = `O valor máximo restante para este item é R$ ${maxDisponivel.toFixed(2).replace('.',',')}`;
+            maxLimitNotice.style.display = "block";
+            return;
+        }
+
+        // Esconde o passo 1 e mostra a confirmação final
+        modalStep1.style.display = "none";
+        modalStep2.style.display = "block";
     }
+}
 
-    if (valorDigitado > maxDisponivel && presenteAtualId !== 'livre') {
-        maxLimitNotice.innerText = `O valor máximo restante para este item é R$ ${maxDisponivel.toFixed(2).replace('.',',')}`;
-        maxLimitNotice.style.display = "block";
-        return;
+// Voltar da Etapa 2 para a Etapa 1
+if(btnVoltarStep1) {
+    btnVoltarStep1.onclick = function() {
+        modalStep2.style.display = "none";
+        modalStep1.style.display = "block";
     }
+}
 
-    if (presenteAtualId !== 'livre') {
-        const presenteEspecificoRef = ref(db, `presentes/${presenteAtualId}`);
-        runTransaction(presenteEspecificoRef, (valorAtual) => {
-            return (valorAtual || 0) + valorDigitado;
-        }).then(() => {
-            alert(`Muito obrigado! Seu presente de R$ ${valorDigitado.toFixed(2).replace('.',',')} foi registrado e atualizado para todos.`);
+// Etapa 2: Confirmação Final - Salvar no Firebase
+if(btnConfirmarFinal) {
+    btnConfirmarFinal.onclick = function() {
+        const valorDigitado = parseFloat(contribValueInput.value);
+
+        if (presenteAtualId !== 'livre') {
+            const presenteEspecificoRef = ref(db, `presentes/${presenteAtualId}`);
+            runTransaction(presenteEspecificoRef, (valorAtual) => {
+                return (valorAtual || 0) + valorDigitado;
+            }).then(() => {
+                alert(`Muito obrigado! Seu presente de R$ ${valorDigitado.toFixed(2).replace('.',',')} foi registrado e atualizado para todos.`);
+                closePixModal();
+            }).catch((error) => {
+                console.error("Erro ao salvar:", error);
+                alert("Houve um erro ao registrar. Tente novamente.");
+            });
+        } else {
+            alert(`Muito obrigado! Seu presente em PIX Livre de R$ ${valorDigitado.toFixed(2).replace('.',',')} foi confirmado.`);
             closePixModal();
-        }).catch((error) => {
-            console.error("Erro ao salvar:", error);
-            alert("Houve um erro ao registrar. Tente novamente.");
-        });
-    } else {
-        alert(`Muito obrigado! Seu presente em PIX Livre de R$ ${valorDigitado.toFixed(2).replace('.',',')} foi confirmado.`);
-        closePixModal();
+        }
     }
 }
